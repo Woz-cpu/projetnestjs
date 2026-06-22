@@ -5,13 +5,13 @@ import { IsString, IsEmail, IsOptional, IsNumber, IsObject } from 'class-validat
  */
 export class SendMailDto {
   @IsEmail({}, { message: 'L\'adresse email est invalide' })
-  to: string;
+  to!: string;
 
   @IsString({ message: 'Le sujet est requis' })
-  subject: string;
+  subject!: string;
 
   @IsString({ message: 'Le corps du message est requis' })
-  body: string;
+  body!: string;
 }
 
 /**
@@ -19,10 +19,10 @@ export class SendMailDto {
  */
 export class SetCacheDto {
   @IsString({ message: 'La clé est requise' })
-  key: string;
+  key!: string;
 
   @IsString({ message: 'La valeur est requise' })
-  value: string;
+  value!: string;
 
   @IsOptional()
   @IsNumber({}, { message: 'Le TTL doit être un nombre (en secondes)' })
@@ -34,7 +34,7 @@ export class SetCacheDto {
  */
 export class AddJobDto {
   @IsString({ message: 'Le nom du job est requis' })
-  jobName: string;
+  jobName!: string;
 
   @IsOptional()
   @IsObject({ message: 'Les données doivent être un objet' })

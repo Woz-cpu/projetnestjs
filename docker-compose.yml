@@ -11,7 +11,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
       POSTGRES_DB: ${DB_NAME:-app_db}
     ports:
-      - "${DB_PORT:-5432}:5432"
+      - "${DB_PORT:-5433}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -28,7 +28,7 @@ services:
     container_name: app_redis
     restart: unless-stopped
     ports:
-      - "${REDIS_PORT:-6379}:6379"
+      - "${REDIS_PORT:-6390}:6379"
     volumes:
       - redis_data:/data
     healthcheck:
@@ -47,8 +47,8 @@ services:
     container_name: app_mailpit
     restart: unless-stopped
     ports:
-      - "${MAIL_WEB_PORT:-8025}:8025"  # Interface web
-      - "${MAIL_SMTP_PORT:-1025}:1025" # SMTP
+      - "${MAIL_WEB_PORT:-8026}:8025"  # Interface web
+      - "${MAIL_SMTP_PORT:-1026}:1025" # SMTP
     environment:
       MP_MAX_MESSAGES: 500
       MP_SMTP_AUTH_ACCEPT_ANY: 1
@@ -64,7 +64,7 @@ services:
     container_name: app_backend
     restart: unless-stopped
     ports:
-      - "${BACKEND_PORT:-3000}:3000"
+      - "${BACKEND_PORT:-3001}:3000"
     environment:
       NODE_ENV: development
       DATABASE_URL: postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@postgres:5432/${DB_NAME:-app_db}
@@ -94,9 +94,9 @@ services:
     container_name: app_frontend
     restart: unless-stopped
     ports:
-      - "${FRONTEND_PORT:-5173}:5173"
+      - "${FRONTEND_PORT:-5174}:5173"
     environment:
-      VITE_API_URL: http://localhost:${BACKEND_PORT:-3000}
+      VITE_API_URL: http://localhost:${BACKEND_PORT:-3001}
     volumes:
       - ./frontend/src:/app/src
       - ./frontend/public:/app/public

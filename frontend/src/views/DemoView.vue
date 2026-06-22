@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 
-const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
 // État pour les différentes démos
 const mailResult = ref<string | null>(null)
@@ -94,7 +94,7 @@ async function testQueue() {
       </h2>
       <p class="text-sm text-gray-500 mb-4">
         Les emails sont capturés par Mailpit. Vérifiez-les sur
-        <a href="http://localhost:8025" target="_blank" class="text-indigo-600 hover:text-indigo-500">localhost:8025</a>
+        <a href="http://localhost:8026" target="_blank" class="text-indigo-600 hover:text-indigo-500">localhost:8025</a>
       </p>
       <div class="space-y-4">
         <div>

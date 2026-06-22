@@ -13,11 +13,11 @@ Le projet utilise 5 conteneurs Docker :
 
 | Service | Description | Port |
 |---------|-------------|------|
-| **postgres** | Base de données PostgreSQL 16 | 5432 |
-| **redis** | Cache et système de queues | 6379 |
-| **mailpit** | Serveur mail local (capture les emails) | 8025 (web), 1025 (SMTP) |
-| **backend** | API NestJS | 3000 |
-| **frontend** | Application Vue.js | 5173 |
+| **postgres** | Base de données PostgreSQL 16 | 5433 |
+| **redis** | Cache et système de queues | 6380 |
+| **mailpit** | Serveur mail local (capture les emails) | 8026 (web), 1026 (SMTP) |
+| **backend** | API NestJS | 3001 |
+| **frontend** | Application Vue.js | 5174 |
 
 ## Démarrage rapide
 
@@ -37,9 +37,9 @@ C'est tout ! Attends que tous les services soient démarrés (ça peut prendre 1
 
 ### 3. Accéder aux services
 
-- **Frontend Vue.js** : http://localhost:5173
-- **Backend NestJS** : http://localhost:3000
-- **Mailpit (emails)** : http://localhost:8025
+- **Frontend Vue.js** : http://localhost:5174
+- **Backend NestJS** : http://localhost:3001
+- **Mailpit (emails)** : http://localhost:8026
 
 ## Commandes utiles
 
@@ -106,28 +106,28 @@ Une fois Docker lancé, tu peux tester les services depuis le frontend (http://l
 ### Test du mail
 
 ```bash
-curl -X POST http://localhost:3000/demo/mail/send \
+curl -X POST http://localhost:3001/demo/mail/send \
   -H "Content-Type: application/json" \
   -d '{"to": "test@example.com", "subject": "Test", "body": "Hello!"}'
 ```
-Puis vérifie l'email sur http://localhost:8025
+Puis vérifie l'email sur http://localhost:8026
 
 ### Test du cache Redis
 
 ```bash
 # Stocker une valeur
-curl -X POST http://localhost:3000/demo/cache/set \
+curl -X POST http://localhost:3001/demo/cache/set \
   -H "Content-Type: application/json" \
   -d '{"key": "ma-cle", "value": "ma-valeur"}'
 
 # Récupérer la valeur
-curl http://localhost:3000/demo/cache/get/ma-cle
+curl http://localhost:3001/demo/cache/get/ma-cle
 ```
 
 ### Test de la queue
 
 ```bash
-curl -X POST http://localhost:3000/demo/queue/add \
+curl -X POST http://localhost:3001/demo/queue/add \
   -H "Content-Type: application/json" \
   -d '{"jobName": "mon-job", "data": {"message": "Hello!"}}'
 ```
@@ -136,7 +136,7 @@ Le résultat du job s'affiche dans les logs du backend.
 ### Vérifier l'état de tous les services
 
 ```bash
-curl http://localhost:3000/demo/health
+curl http://localhost:3001/demo/health
 ```
 
 ## Structure des fichiers Docker
@@ -190,9 +190,9 @@ docker compose up --build
 | `DB_USER` | Utilisateur PostgreSQL | postgres |
 | `DB_PASSWORD` | Mot de passe PostgreSQL | postgres |
 | `DB_NAME` | Nom de la base | app_db |
-| `DB_PORT` | Port PostgreSQL | 5432 |
-| `REDIS_PORT` | Port Redis | 6379 |
-| `BACKEND_PORT` | Port du backend | 3000 |
-| `FRONTEND_PORT` | Port du frontend | 5173 |
-| `MAIL_WEB_PORT` | Port interface Mailpit | 8025 |
-| `MAIL_SMTP_PORT` | Port SMTP Mailpit | 1025 |
+| `DB_PORT` | Port PostgreSQL | 5433 |
+| `REDIS_PORT` | Port Redis | 6380 |
+| `BACKEND_PORT` | Port du backend | 3001 |
+| `FRONTEND_PORT` | Port du frontend | 5174 |
+| `MAIL_WEB_PORT` | Port interface Mailpit | 8026 |
+| `MAIL_SMTP_PORT` | Port SMTP Mailpit | 1026 |

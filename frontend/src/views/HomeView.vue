@@ -21,7 +21,7 @@
               API REST avec Prisma ORM, validation, et modules de démonstration.
             </p>
             <a
-              href="http://localhost:3000"
+              href="http://localhost:3001"
               target="_blank"
               class="mt-4 inline-block text-indigo-600 hover:text-indigo-500"
             >
@@ -39,7 +39,7 @@
               Serveur mail local pour tester l'envoi d'emails.
             </p>
             <a
-              href="http://localhost:8025"
+              href="http://localhost:8026"
               target="_blank"
               class="mt-4 inline-block text-green-600 hover:text-green-500"
             >

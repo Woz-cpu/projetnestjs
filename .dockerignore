@@ -1,6 +1,8 @@
 # Dépendances
 node_modules
-frontend/node_modules
+
+# Frontend (a son propre conteneur)
+frontend
 
 # Build
 dist

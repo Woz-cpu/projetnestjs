@@ -16,8 +16,7 @@ export class CacheService {
    * @param ttl Durée de vie en secondes (optionnel)
    */
   async set<T>(key: string, value: T, ttl?: number): Promise<void> {
-    const options = ttl ? { ttl: ttl * 1000 } : undefined; // Convertir en ms
-    await this.cacheManager.set(key, value, options);
+    await this.cacheManager.set(key, value, ttl ? ttl * 1000 : undefined);
     this.logger.debug(`Cache SET: ${key}`);
   }
 
@@ -29,7 +28,7 @@ export class CacheService {
   async get<T>(key: string): Promise<T | undefined> {
     const value = await this.cacheManager.get<T>(key);
     this.logger.debug(`Cache GET: ${key} -> ${value ? 'HIT' : 'MISS'}`);
-    return value;
+    return value ?? undefined;
   }
 
   /**
