@@ -1,0 +1,41 @@
+# Dépendances
+node_modules
+frontend/node_modules
+
+# Build
+dist
+frontend/dist
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environnement
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Tests
+coverage
+
+# Docker
+docker-compose*.yml
+Dockerfile*
+.dockerignore
+
+# Prisma
+generated
