@@ -65,10 +65,10 @@ services:
     restart: unless-stopped
     ports:
       - "${BACKEND_PORT:-3001}:3000"
-      - "5555:5555"  # Prisma Studio
+      - "5555:5555" # Port pour le débogage distant (si nécessaire)
     environment:
       NODE_ENV: development
-      DATABASE_URL: postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@postgres:5432/${DB_NAME:-app_db}
+      DATABASE_URL: postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@postgres:5433/${DB_NAME:-app_db}
       REDIS_HOST: redis
       REDIS_PORT: 6379
       MAIL_HOST: mailpit
