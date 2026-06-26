@@ -2,7 +2,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { PrismaModule } from './prisma/prisma.module';
 import { UsersModule } from './modules/users/users.module';
+import { RolesModule } from './modules/roles/roles.module';
 import { MailModule } from './modules/mail/mail.module';
 import { CacheModule } from './modules/cache/cache.module';
 import { QueueModule } from './modules/queue/queue.module';
@@ -14,8 +16,11 @@ import { DemoModule } from './modules/demo/demo.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    // Accès base de données (Prisma)
+    PrismaModule,
     // Modules métier
     UsersModule,
+    RolesModule,
     // Modules infrastructure
     MailModule,
     CacheModule,

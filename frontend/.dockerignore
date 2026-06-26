@@ -1,0 +1,28 @@
+# Dépendances (réinstallées dans l'image)
+node_modules
+
+# Build
+dist
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environnement
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
