@@ -7,8 +7,82 @@ generator client {
 }
 
 model Role {
-  id   Int    @id @default(autoincrement())
-  name String @unique
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  users User[]
 
   @@map("roles")
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  username   String   @unique @db.VarChar(50)
+  email      String   @unique
+  password   String
+  firstName  String   @map("first_name") @db.VarChar(50)
+  lastName   String   @map("last_name") @db.VarChar(50)
+  roleId     Int      @map("role_id")
+  street     String?
+  city       String?
+  postalCode String?  @map("postal_code")
+  country    String?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  role    Role          @relation(fields: [roleId], references: [id])
+  library UserLibrary[]
+
+  @@map("users")
+}
+
+model UserLibrary {
+  userId  Int      @map("user_id")
+  gameId  Int      @map("game_id")
+  addedAt DateTime @default(now()) @map("added_at")
+
+  user User @relation(fields: [userId], references: [id])
+  game Game @relation(fields: [gameId], references: [id])
+
+  @@id([userId, gameId])
+  @@map("user_library")
+}
+
+model Game {
+  id          Int      @id @default(autoincrement())
+  name        String
+  releaseDate DateTime @map("release_date") @db.Date
+  publisherId Int      @map("publisher_id")
+
+  publisher Publisher      @relation(fields: [publisherId], references: [id])
+  library   UserLibrary[]
+  platforms GamePlatform[]
+
+  @@map("games")
+}
+
+model Publisher {
+  id                 Int      @id @default(autoincrement())
+  name               String   @unique
+  studioCreationDate DateTime @map("studio_creation_date") @db.Date
+  games              Game[]
+
+  @@map("publishers")
+}
+
+model Platform {
+  id    Int            @id @default(autoincrement())
+  name  String         @unique
+  games GamePlatform[]
+
+  @@map("platforms")
+}
+
+model GamePlatform {
+  gameId     Int @map("game_id")
+  platformId Int @map("platform_id")
+
+  game     Game     @relation(fields: [gameId], references: [id])
+  platform Platform @relation(fields: [platformId], references: [id])
+
+  @@id([gameId, platformId])
+  @@map("game_platforms")
 }
