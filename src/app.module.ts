@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { UsersModule } from './modules/users/users.module';
 import { RolesModule } from './modules/roles/roles.module';
+import { GamesModule } from './modules/games/games.module';
 import { MailModule } from './modules/mail/mail.module';
 import { CacheModule } from './modules/cache/cache.module';
 import { QueueModule } from './modules/queue/queue.module';
@@ -21,6 +22,7 @@ import { DemoModule } from './modules/demo/demo.module';
     // Modules métier
     UsersModule,
     RolesModule,
+    GamesModule,
     // Modules infrastructure
     MailModule,
     CacheModule,
