@@ -8,96 +8,84 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter: new PrismaPg(pool) });
 
 async function main() {
-  console.log(':pousse: Début du seed...');
+  console.log('[seed] Demarrage du seed...');
+
+  // ============================================================
+  // 0. NETTOYAGE (ordre inverse des dependances FK)
+  //    -> rend le seed rejouable sans doublons ni conflits.
+  // ============================================================
+  console.log('[seed] Nettoyage des tables existantes...');
+
+  await prisma.userLibrary.deleteMany();
+  await prisma.gamePlatform.deleteMany();
+  await prisma.game.deleteMany();
+  await prisma.user.deleteMany();
+  await prisma.publisher.deleteMany();
+  await prisma.platform.deleteMany();
+  await prisma.role.deleteMany();
 
   // ============================================================
   // 1. ROLES
   // ============================================================
-  console.log(':buste_silhouette: Création des rôles...');
+  console.log('[seed] Creation des roles...');
 
-  const roles = await Promise.all([
-    prisma.role.upsert({
-      where: { name: 'admin' },
-      update: {},
-      create: { name: 'admin' },
-    }),
-    prisma.role.upsert({
-      where: { name: 'user' },
-      update: {},
-      create: { name: 'user' },
-    }),
-    prisma.role.upsert({
-      where: { name: 'moderator' },
-      update: {},
-      create: { name: 'moderator' },
-    }),
+  const [adminRole, userRole, moderatorRole] = await Promise.all([
+    prisma.role.create({ data: { name: 'admin' } }),
+    prisma.role.create({ data: { name: 'user' } }),
+    prisma.role.create({ data: { name: 'moderator' } }),
   ]);
 
-  const adminRole      = roles[0];
-  const userRole       = roles[1];
-  const moderatorRole  = roles[2];
-
-  console.log(':coche_blanche: Rôles créés : admin, user, moderator');
+  console.log('  -> roles crees : admin, user, moderator');
 
   // ============================================================
   // 2. PLATFORMS
   // ============================================================
-  console.log(':jeu_vidéo: Création des plateformes...');
+  console.log('[seed] Creation des plateformes...');
 
   const platformNames = ['PS5', 'Xbox', 'Switch', 'Switch 2', 'PC', 'Mac'];
 
   const platforms = await Promise.all(
     platformNames.map((name) =>
-      prisma.platform.upsert({
-        where: { name },
-        update: {},
-        create: { name },
-      })
-    )
+      prisma.platform.create({ data: { name } }),
+    ),
   );
 
-  console.log(`:coche_blanche: ${platforms.length} plateformes créées`);
+  console.log(`  -> ${platforms.length} plateformes creees`);
 
   // ============================================================
   // 3. PUBLISHERS
   // ============================================================
-  console.log(':bureaux: Création des publishers...');
+  console.log('[seed] Creation des publishers...');
 
   const publisherData = [
-    { name: 'Nintendo',           studioCreationDate: new Date('1889-09-23') },
-    { name: 'Sony Interactive',   studioCreationDate: new Date('1993-11-16') },
-    { name: 'Microsoft Gaming',   studioCreationDate: new Date('2000-01-01') },
-    { name: 'Ubisoft',            studioCreationDate: new Date('1986-03-28') },
-    { name: 'EA Games',           studioCreationDate: new Date('1982-05-28') },
-    { name: 'Activision',         studioCreationDate: new Date('1979-10-01') },
-    { name: 'Rockstar Games',     studioCreationDate: new Date('1998-12-01') },
-    { name: 'CD Projekt Red',     studioCreationDate: new Date('1994-05-01') },
-    { name: 'Bethesda',           studioCreationDate: new Date('1986-06-28') },
-    { name: 'Square Enix',        studioCreationDate: new Date('1975-09-22') },
+    { name: 'Nintendo', studioCreationDate: new Date('1889-09-23') },
+    { name: 'Sony Interactive', studioCreationDate: new Date('1993-11-16') },
+    { name: 'Microsoft Gaming', studioCreationDate: new Date('2000-01-01') },
+    { name: 'Ubisoft', studioCreationDate: new Date('1986-03-28') },
+    { name: 'EA Games', studioCreationDate: new Date('1982-05-28') },
+    { name: 'Activision', studioCreationDate: new Date('1979-10-01') },
+    { name: 'Rockstar Games', studioCreationDate: new Date('1998-12-01') },
+    { name: 'CD Projekt Red', studioCreationDate: new Date('1994-05-01') },
+    { name: 'Bethesda', studioCreationDate: new Date('1986-06-28') },
+    { name: 'Square Enix', studioCreationDate: new Date('1975-09-22') },
   ];
 
   const publishers = await Promise.all(
-    publisherData.map((p) =>
-      prisma.publisher.upsert({
-        where: { name: p.name },
-        update: {},
-        create: p,
-      })
-    )
+    publisherData.map((p) => prisma.publisher.create({ data: p })),
   );
 
-  console.log(`:coche_blanche: ${publishers.length} publishers créés`);
+  console.log(`  -> ${publishers.length} publishers crees`);
 
   // ============================================================
-  // 4. GAMES (50 jeux)
+  // 4. GAMES (+ relations GamePlatform)
   // ============================================================
-  console.log(':joystick:  Création des jeux...');
+  console.log('[seed] Creation des jeux...');
 
   const gameNames = [
     'The Legend of Zelda: Echoes of the Past',
     'Horizon Forbidden West II',
     'Halo Infinite 2',
-    'Assassin\'s Creed Mirage 2',
+    "Assassin's Creed Mirage 2",
     'FIFA 26',
     'Call of Duty: Black Ops VII',
     'Red Dead Redemption 3',
@@ -129,8 +117,8 @@ async function main() {
     'Ghost of Tsushima 2',
     'Last of Us Part IV',
     'Uncharted 5',
-    'Demon\'s Souls Remake 2',
-    'Baldur\'s Gate 4',
+    "Demon's Souls Remake 2",
+    "Baldur's Gate 4",
     'Divinity Original Sin 3',
     'Mass Effect 5',
     'Dragon Age: The Veilguard 2',
@@ -158,108 +146,127 @@ async function main() {
             to: new Date('2026-12-31'),
           }),
           publisherId: publisher.id,
-          // Relations GamePlatform : entre 1 et 4 plateformes aléatoires par jeu
+          // Chaque jeu sort sur 1 a 4 plateformes aleatoires.
           platforms: {
             create: faker.helpers
               .arrayElements(platforms, { min: 1, max: 4 })
-              .map((platform) => ({
-                platformId: platform.id,
-              })),
+              .map((platform) => ({ platformId: platform.id })),
           },
         },
       });
-    })
+    }),
   );
 
-  console.log(`:coche_blanche: ${games.length} jeux créés avec leurs plateformes`);
+  console.log(`  -> ${games.length} jeux crees avec leurs plateformes`);
 
   // ============================================================
-  // 5. USERS (10 users, le 1er est admin)
+  // 5. USERS (+ UserLibrary)
   // ============================================================
-  console.log(':bustes_silhouettes: Création des utilisateurs...');
+  console.log('[seed] Creation des utilisateurs...');
 
   const hashedPassword = await bcrypt.hash('password', 10);
 
-  // -- Admin fixe
-  await prisma.user.upsert({
-    where: { email: 'admin@example.com' },
-    update: {},
-    create: {
-      username:  'admin',
-      email:     'admin@example.com',
-      password:  hashedPassword,
+  // -- Admin fixe (identifiants connus pour se connecter)
+  await prisma.user.create({
+    data: {
+      username: 'admin',
+      email: 'admin@example.com',
+      password: hashedPassword,
       firstName: 'Super',
-      lastName:  'Admin',
-      roleId:    adminRole.id,
-      street:    '1 Rue de la Paix',
-      city:      'Paris',
-      postalCode:'75001',
-      country:   'France',
+      lastName: 'Admin',
+      roleId: adminRole.id,
+      street: '1 Rue de la Paix',
+      city: 'Paris',
+      postalCode: '75001',
+      country: 'France',
+      // L'admin possede aussi une librairie bien garnie.
+      library: {
+        create: faker.helpers
+          .arrayElements(games, { min: 10, max: 20 })
+          .map((game) => ({
+            gameId: game.id,
+            addedAt: faker.date.recent({ days: 365 }),
+          })),
+      },
     },
   });
 
-  // -- 9 users aléatoires
+  // -- 19 utilisateurs aleatoires (user / moderator)
   const randomRoles = [userRole, moderatorRole];
+  const usedUsernames = new Set<string>(['admin']);
+  const usedEmails = new Set<string>(['admin@example.com']);
 
-  for (let i = 0; i < 9; i++) {
+  for (let i = 0; i < 19; i++) {
     const firstName = faker.person.firstName();
-    const lastName  = faker.person.lastName();
-    const role      = randomRoles[i % randomRoles.length];
+    const lastName = faker.person.lastName();
+    const role = randomRoles[i % randomRoles.length];
 
-    const user = await prisma.user.create({
+    // Garantit l'unicite de username/email malgre la generation aleatoire.
+    let username = faker.internet.username({ firstName, lastName }).toLowerCase();
+    while (usedUsernames.has(username)) {
+      username = `${username}${faker.number.int({ min: 1, max: 999 })}`;
+    }
+    usedUsernames.add(username);
+
+    let email = faker.internet.email({ firstName, lastName }).toLowerCase();
+    while (usedEmails.has(email)) {
+      email = faker.internet
+        .email({ firstName, lastName, provider: `mail${i}.com` })
+        .toLowerCase();
+    }
+    usedEmails.add(email);
+
+    // Chaque user possede entre 3 et 15 jeux uniques dans sa librairie.
+    const userGames = faker.helpers.arrayElements(games, { min: 3, max: 15 });
+
+    await prisma.user.create({
       data: {
-        username:  faker.internet.username({ firstName, lastName }).toLowerCase(),
-        email:     faker.internet.email({ firstName, lastName }).toLowerCase(),
-        password:  hashedPassword,
+        username,
+        email,
+        password: hashedPassword,
         firstName,
         lastName,
-        roleId:    role.id,
-        street:    faker.location.streetAddress(),
-        city:      faker.location.city(),
-        postalCode:faker.location.zipCode(),
-        country:   faker.location.country(),
+        roleId: role.id,
+        street: faker.location.streetAddress(),
+        city: faker.location.city(),
+        postalCode: faker.location.zipCode(),
+        country: faker.location.country(),
+        library: {
+          create: userGames.map((game) => ({
+            gameId: game.id,
+            addedAt: faker.date.recent({ days: 365 }),
+          })),
+        },
       },
     });
-
-    // Chaque user a entre 3 et 15 jeux dans sa librairie
-    const userGames = faker.helpers.arrayElements(games, {
-      min: 3,
-      max: 15,
-    });
-
-    await Promise.all(
-      userGames.map((game) =>
-        prisma.userLibrary.create({
-          data: {
-            userId:  user.id,
-            gameId:  game.id,
-            addedAt: faker.date.recent({ days: 365 }),
-          },
-        })
-      )
-    );
   }
 
-  console.log(':coche_blanche: 10 utilisateurs créés avec leurs librairies');
+  const userCount = await prisma.user.count();
+  const libraryCount = await prisma.userLibrary.count();
+  const gamePlatformCount = await prisma.gamePlatform.count();
+
+  console.log(`  -> ${userCount} utilisateurs crees avec leurs librairies`);
 
   // ============================================================
-  // RÉSUMÉ
+  // RESUME
   // ============================================================
-  console.log('\n:tada: Seed terminé avec succès !');
-  console.log(':histogramme: Résumé :');
-  console.log(`   - ${roles.length} rôles`);
+  console.log('\n[seed] Termine avec succes !');
+  console.log('Resume :');
+  console.log(`   - ${await prisma.role.count()} roles`);
   console.log(`   - ${platforms.length} plateformes`);
   console.log(`   - ${publishers.length} publishers`);
   console.log(`   - ${games.length} jeux`);
-  console.log('   - 10 utilisateurs (dont 1 admin)');
-  console.log('\n:clé: Connexion admin :');
+  console.log(`   - ${gamePlatformCount} associations jeu/plateforme`);
+  console.log(`   - ${userCount} utilisateurs (dont 1 admin)`);
+  console.log(`   - ${libraryCount} entrees de librairie`);
+  console.log('\nConnexion admin :');
   console.log('   Email    : admin@example.com');
   console.log('   Password : password');
 }
 
 main()
   .catch((e) => {
-    console.error(':x: Erreur seed :', e);
+    console.error('[seed] Erreur :', e);
     process.exit(1);
   })
   .finally(async () => {

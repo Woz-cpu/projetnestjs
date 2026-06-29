@@ -6,6 +6,10 @@ import { PrismaModule } from './prisma/prisma.module';
 import { UsersModule } from './modules/users/users.module';
 import { RolesModule } from './modules/roles/roles.module';
 import { GamesModule } from './modules/games/games.module';
+import { PublishersModule } from './modules/publishers/publishers.module';
+import { PlatformsModule } from './modules/platforms/platforms.module';
+import { UserLibraryModule } from './modules/user-library/user-library.module';
+import { GamePlatformsModule } from './modules/game-platforms/game-platforms.module';
 import { MailModule } from './modules/mail/mail.module';
 import { CacheModule } from './modules/cache/cache.module';
 import { QueueModule } from './modules/queue/queue.module';
@@ -23,6 +27,10 @@ import { DemoModule } from './modules/demo/demo.module';
     UsersModule,
     RolesModule,
     GamesModule,
+    PublishersModule,
+    PlatformsModule,
+    UserLibraryModule,
+    GamePlatformsModule,
     // Modules infrastructure
     MailModule,
     CacheModule,
