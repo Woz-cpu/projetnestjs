@@ -1,47 +1,42 @@
-import { Injectable, Post } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateUserDTO } from './dto/create-user.dto';
-import { Prisma } from '@prisma/client';
+import { PrismaService } from '../../prisma/prisma.service';
+
 @Injectable()
 export class UsersService {
+  constructor(private readonly prisma: PrismaService) {}
 
-    findAll() {
-        return this.users;
-    }
+  async findAll() {
+    return this.prisma.user.findMany();
+  }
 
-    async findOne(id: number) {
-        const user = await this.prisma.user.findUnique({
-            where: { id }
-        })
-    }
+  async findOne(id: number) {
+    return this.prisma.user.findUnique({
+      where: { id },
+    });
+  }
 
-//     async findById(id: number, includeDeleted = false) {
-//   const user = await this.prisma.user.findUnique({
-//     where: { id },
-//     include: {
-//       company: true,
-//       assignedCompanies: {
-//         include: {
-//           company: { select: { id: true, name: true, slug: true } },
-//         },
-//       },
-//     },
-//   });
+  async create(dto: CreateUserDTO) {
+    return this.prisma.user.create({
+      data: {
+        username: dto.username.trim(),
+        email: dto.email.trim().toLowerCase(),
+        password: dto.password,
+        firstName: dto.firstName.trim(),
+        lastName: dto.lastName.trim(),
+        roleId: dto.roleId,
+        street: dto.street?.trim(),
+        city: dto.city?.trim(),
+        postalCode: dto.postalCode?.trim(),
+        country: dto.country?.trim(),
+      },
+    });
+  }
 
-        AddUser(dto: CreateUserDTO) {
-        const newUser = {
-            id: Number(dto.id),
-            name: dto.name?.trim()
-        }
-        this.users.push(newUser);
-        console.log(`User added: ${newUser.name}`);
-        return newUser;
-    }
-
-    EditUser(id: number, user: { id: number; name: string }) {
-        const index = this.users.findIndex(u => u.id === id);
-        if (index !== -1) {
-            this.users[index] = { ...this.users[index], ...user };
-        }
-        return this.users[index];
-    }
+  async update(id: number, data: Partial<CreateUserDTO>) {
+    return this.prisma.user.update({
+      where: { id },
+      data,
+    });
+  }
 }

@@ -1,47 +1,36 @@
 import {
-    Controller,
-    Get,
-    Param,
-    Post,
-    Body,
-    Put,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Body,
+  Put,
+  ParseIntPipe,
 } from '@nestjs/common';
-
 import { UsersService } from './users.service';
 import { CreateUserDTO } from './dto/create-user.dto';
 
 @Controller('users')
 export class UsersController {
-    //On injecte le service UsersService dans le contrôleur UsersController via le constructeur. Cela permet au contrôleur d'accéder aux méthodes du service pour gérer les utilisateurs.
-constructor(private readonly UsersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) {}
 
-    @Get()
-    findAll() {
-        //Cette méthode est un gestionnaire de route pour la requête GET sur l'URL /users. Elle utilise le service UsersService pour récupérer tous les utilisateurs et les renvoyer en réponse.
-        return this.UsersService.findAll();
-    }
+  @Get()
+  findAll() {
+    return this.usersService.findAll();
+  }
 
-    @Get(':id')
-    findOne(@Param('id') id: number) {
-        //Cette méthode est un gestionnaire de route pour la requête GET sur l'URL /users/:id. Elle utilise le service UsersService pour récupérer un utilisateur spécifique en fonction de l'identifiant fourni dans l'URL.
-        return this.UsersService.findOne(id);
-    }
+  @Get(':id')
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.findOne(id);
+  }
 
-    @Post('create')
-    AddUser(@Body() user: { id: number; name: string }) {
-        //Cette méthode est un gestionnaire de route pour la requête POST sur l'URL /users. Elle utilise le service UsersService pour ajouter un nouvel utilisateur en fonction des données fournies dans le corps de la requête.
-        return this.UsersService.AddUser(user);
-    }
+  @Post()
+  create(@Body() dto: CreateUserDTO) {
+    return this.usersService.create(dto);
+  }
 
-    @Put('edit/:id')
-    EditUser(@Param('id') id: number, @Body() user: { id: number; name: string }) {
-        //Cette méthode est un gestionnaire de route pour la requête PUT sur l'URL /users/edit/:id. Elle utilise le service UsersService pour modifier un utilisateur spécifique en fonction de l'identifiant fourni dans l'URL et des données fournies dans le corps de la requête.
-        return this.UsersService.EditUser(id, user);
-    }
-
-    @Post('create-dto')
-    CreateUserDTO(@Body() user: CreateUserDTO) {
-        //Cette méthode est un gestionnaire de route pour la requête POST sur l'URL /users. Elle utilise le service UsersService pour ajouter un nouvel utilisateur en fonction des données fournies dans le corps de la requête.
-        return this.UsersService.AddUser(user);
-    }
+  @Put(':id')
+  update(@Param('id', ParseIntPipe) id: number, @Body() data: Partial<CreateUserDTO>) {
+    return this.usersService.update(id, data);
+  }
 }
