@@ -40,13 +40,13 @@ Le projet est composé de **5 conteneurs** orchestrés par Docker Compose :
 | Service      | Rôle                                              | Port(s) exposés                    |
 |--------------|---------------------------------------------------|------------------------------------|
 | **postgres** | Base de données PostgreSQL 16                      | `5433`                             |
-| **redis**    | Cache et système de queues (jobs asynchrones)     | `6380`                             |
-| **mailpit**  | Serveur mail local qui capture les emails envoyés | `8026` (web) · `1026` (SMTP)       |
-| **backend**  | API NestJS                                        | `3001`                             |
-| **frontend** | Application Vue.js                                 | `5174`                             |
+| **redis**    | Cache et système de queues (jobs asynchrones)     | `6379`                             |
+| **mailpit**  | Serveur mail local qui capture les emails envoyés | `8025` (web) · `1025` (SMTP)       |
+| **backend**  | API NestJS                                        | `3000`                             |
+| **frontend** | Application Vue.js                                 | `5173`                             |
 
-> **Pourquoi ces ports décalés ?**
-> Les ports exposés (5433, 6380, 8026…) sont volontairement différents des ports par défaut (5432, 6379, 8025…) pour éviter les conflits si tu as déjà PostgreSQL, Redis, etc. installés localement. **À l'intérieur** du réseau Docker, les services communiquent entre eux par leur nom (`postgres`, `redis`, `mailpit`) sur leurs ports standards.
+> **À propos des ports exposés**
+> Le port de PostgreSQL est exposé sur `5433` (au lieu du `5432` par défaut) pour éviter un conflit avec une éventuelle installation locale. Les autres services utilisent leurs ports standards. **À l'intérieur** du réseau Docker, les services communiquent entre eux par leur nom (`postgres`, `redis`, `mailpit`) sur leurs ports standards.
 
 ---
 
@@ -74,9 +74,9 @@ Une fois tout démarré, ouvre dans ton navigateur :
 
 | Service              | URL                       |
 |----------------------|---------------------------|
-| Frontend Vue.js      | http://localhost:5174     |
-| Backend NestJS (API) | http://localhost:3001     |
-| Mailpit (emails)     | http://localhost:8026     |
+| Frontend Vue.js      | http://localhost:5173     |
+| Backend NestJS (API) | http://localhost:3000     |
+| Mailpit (emails)     | http://localhost:8025     |
 
 ---
 
@@ -157,34 +157,34 @@ docker compose exec backend npx prisma studio
 
 ## Tester les services
 
-Une fois Docker lancé, tu peux tester les services via la page de démo du frontend (http://localhost:5174/demo) ou directement avec `curl`.
+Une fois Docker lancé, tu peux tester les services via la page de démo du frontend (http://localhost:5173/demo) ou directement avec `curl`.
 
 ### Envoi d'un mail
 
 ```bash
-curl -X POST http://localhost:3001/demo/mail/send \
+curl -X POST http://localhost:3000/demo/mail/send \
   -H "Content-Type: application/json" \
   -d '{"to": "test@example.com", "subject": "Test", "body": "Hello!"}'
 ```
 
-➡️ Vérifie ensuite que l'email a bien été capturé sur http://localhost:8026
+➡️ Vérifie ensuite que l'email a bien été capturé sur http://localhost:8025
 
 ### Cache Redis
 
 ```bash
 # Stocker une valeur
-curl -X POST http://localhost:3001/demo/cache/set \
+curl -X POST http://localhost:3000/demo/cache/set \
   -H "Content-Type: application/json" \
   -d '{"key": "ma-cle", "value": "ma-valeur"}'
 
 # Récupérer la valeur
-curl http://localhost:3001/demo/cache/get/ma-cle
+curl http://localhost:3000/demo/cache/get/ma-cle
 ```
 
 ### Queue (job asynchrone)
 
 ```bash
-curl -X POST http://localhost:3001/demo/queue/add \
+curl -X POST http://localhost:3000/demo/queue/add \
   -H "Content-Type: application/json" \
   -d '{"jobName": "mon-job", "data": {"message": "Hello!"}}'
 ```
@@ -194,7 +194,7 @@ curl -X POST http://localhost:3001/demo/queue/add \
 ### Vérifier la santé de tous les services
 
 ```bash
-curl http://localhost:3001/demo/health
+curl http://localhost:3000/demo/health
 ```
 
 ---
@@ -263,17 +263,17 @@ Définies dans le fichier `.env` (copié depuis `.env.example`) :
 | `DB_PASSWORD`    | Mot de passe PostgreSQL      | `postgres`        |
 | `DB_NAME`        | Nom de la base               | `app_db`          |
 | `DB_PORT`        | Port PostgreSQL              | `5433`            |
-| `REDIS_PORT`     | Port Redis                   | `6380`            |
-| `BACKEND_PORT`   | Port du backend              | `3001`            |
-| `FRONTEND_PORT`  | Port du frontend             | `5174`            |
-| `MAIL_WEB_PORT`  | Port de l'interface Mailpit  | `8026`            |
-| `MAIL_SMTP_PORT` | Port SMTP de Mailpit         | `1026`            |
+| `REDIS_PORT`     | Port Redis                   | `6379`            |
+| `BACKEND_PORT`   | Port du backend              | `3000`            |
+| `FRONTEND_PORT`  | Port du frontend             | `5173`            |
+| `MAIL_WEB_PORT`  | Port de l'interface Mailpit  | `8025`            |
+| `MAIL_SMTP_PORT` | Port SMTP de Mailpit         | `1025`            |
 
 ---
 
 ## Référence des routes de l'API
 
-Toutes les routes sont préfixées par l'URL du backend : `http://localhost:3001`.
+Toutes les routes sont préfixées par l'URL du backend : `http://localhost:3000`.
 
 ### Racine
 
