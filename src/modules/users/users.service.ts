@@ -1,23 +1,31 @@
 import { Injectable, Post } from '@nestjs/common';
 import { CreateUserDTO } from './dto/create-user.dto';
-
+import { Prisma } from '@prisma/client';
 @Injectable()
 export class UsersService {
-    private users = [{ id: 1, name: 'Alice' }, { id: 2, name: 'Bob' }];
 
     findAll() {
         return this.users;
     }
 
-    findOne(id: number) {
-        return this.users.find(user => user.id === id);
+    async findOne(id: number) {
+        const user = await this.prisma.user.findUnique({
+            where: { id }
+        })
     }
 
-    // AddUser(user: { id: number; name: string }) {
-    //     this.users.push(user);
-    //     console.log(`User added: ${user.name}`);
-    //     return user;
-    // }
+//     async findById(id: number, includeDeleted = false) {
+//   const user = await this.prisma.user.findUnique({
+//     where: { id },
+//     include: {
+//       company: true,
+//       assignedCompanies: {
+//         include: {
+//           company: { select: { id: true, name: true, slug: true } },
+//         },
+//       },
+//     },
+//   });
 
         AddUser(dto: CreateUserDTO) {
         const newUser = {
