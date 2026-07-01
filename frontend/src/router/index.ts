@@ -1,18 +1,19 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import LoginView from '../views/LoginView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      // Page de connexion affichée au lancement.
       path: '/',
-      name: 'home',
-      component: HomeView,
+      name: 'login',
+      component: LoginView,
     },
     {
-      path: '/demo',
-      name: 'demo',
-      component: () => import('../views/DemoView.vue'),
+      path: '/welcome',
+      name: 'welcome',
+      component: () => import('../views/WelcomeView.vue'),
     },
   ],
 })

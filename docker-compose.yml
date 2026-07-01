@@ -73,9 +73,13 @@ services:
       REDIS_PORT: 6379
       MAIL_HOST: mailpit
       MAIL_PORT: 1025
+      # Origine autorisée pour le frontend (doit correspondre au port réel du front)
+      CORS_ORIGIN: http://localhost:${FRONTEND_PORT:-5173}
     volumes:
       - ./src:/app/src
       - ./prisma:/app/prisma
+      # Monté pour que les modifs de tsconfig soient prises en compte sans rebuild
+      - ./tsconfig.json:/app/tsconfig.json
     depends_on:
       postgres:
         condition: service_healthy

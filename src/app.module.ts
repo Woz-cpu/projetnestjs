@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
+import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { RolesModule } from './modules/roles/roles.module';
 import { GamesModule } from './modules/games/games.module';
@@ -24,6 +25,7 @@ import { DemoModule } from './modules/demo/demo.module';
     // Accès base de données (Prisma)
     PrismaModule,
     // Modules métier
+    AuthModule,
     UsersModule,
     RolesModule,
     GamesModule,
